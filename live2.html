@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title></title>
+
+<link href="https://vjs.zencdn.net/8.23.4/video-js.css" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+html,body{
+background:#050505;
+color:#fff;
+overflow-x:hidden;
+width:100%;
+}
+
+body{
+padding:10px;
+}
+
+.wrapper{
+width:100%;
+max-width:500px;
+margin:0 auto;
+}
+
+.header{
+text-align:center;
+margin-bottom:12px;
+}
+
+.logo{
+font-size:28px;
+font-weight:900;
+letter-spacing:1px;
+}
+
+.logo-red{
+color:#ff1a1a;
+}
+
+.logo-white{
+color:#ffffff;
+}
+
+.live{
+display:inline-block;
+margin-top:8px;
+padding:8px 20px;
+background:#ff0000;
+border-radius:30px;
+font-size:13px;
+font-weight:bold;
+box-shadow:0 0 15px rgba(255,0,0,.6);
+}
+
+.player-box{
+width:100%;
+background:#161616;
+border-radius:20px;
+overflow:hidden;
+border:1px solid #222;
+box-shadow:0 0 30px rgba(255,0,0,.25);
+}
+
+.video-js{
+width:100%;
+height:auto;
+aspect-ratio:16/9;
+}
+
+.controls{
+padding:10px;
+background:#202020;
+}
+
+.channel-buttons{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:8px;
+margin-bottom:8px;
+}
+
+.channel-btn{
+border:none;
+background:#2f2f2f;
+color:#fff;
+padding:12px 0;
+border-radius:12px;
+font-size:14px;
+font-weight:700;
+cursor:pointer;
+}
+
+.channel-btn.active{
+background:linear-gradient(135deg,#ff1a1a,#555);
+}
+
+.action-buttons{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:8px;
+}
+
+.action-btn{
+border:none;
+padding:12px 0;
+border-radius:12px;
+font-size:13px;
+font-weight:700;
+color:#fff;
+cursor:pointer;
+}
+
+.refresh{
+background:#555;
+}
+
+.donate{
+background:linear-gradient(135deg,#555);
+}
+
+.whatsapp{
+background:#25D366;
+}
+
+.footer{
+text-align:center;
+margin-top:15px;
+font-size:12px;
+color:#aaa;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<div class="header">
+
+<div class="logo">
+<span class="logo-red">IDN</span>
+<span class="logo-white"> STREAM</span>
+</div>
+
+<div class="live">
+🔴 MotoGP Czechia 
+</div>
+
+</div>
+
+<div class="player-box">
+
+<video
+id="videoPlayer"
+class="video-js vjs-default-skin"
+controls
+autoplay
+muted
+playsinline>
+</video>
+
+<div class="controls">
+
+<div class="channel-buttons">
+
+<button class="channel-btn active"
+data-url="https://rxne77juptdeyke3tytvgqwyh.medya.trt.com.tr/master_720.m3u8">
+Server 1
+</button>
+
+<button class="channel-btn"
+data-url="https://as.roomtu.store/rook1_720/index.m3u8">
+Server 2
+</button>
+
+<button class="channel-btn"
+data-url="https://s3.us-east-1.amazonaws.com/cdnb102/hls/0/stream_960x540_2000k.m3u8">
+Server 3
+</button>
+
+</div>
+
+<div class="action-buttons">
+
+<button class="action-btn refresh"
+onclick="location.reload()">
+🔄 Refresh
+</button>
+
+<button class="action-btn donate"
+onclick="window.open('https://saweria.co/IdnStream','_blank')">
+♥️ Donate
+</button>
+
+<button class="action-btn whatsapp"
+onclick="window.open('https://whatsapp.com/channel/0029Vb6SDnI7dmeaUqDeoT1b','_blank')">
+📢 WhatsApp 
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="footer">
+Powered by IDN STREAM
+</div>
+
+</div>
+
+<script src="https://vjs.zencdn.net/8.23.4/video.min.js"></script>
+
+<script>
+
+const player = videojs('videoPlayer',{
+autoplay:true,
+muted:true,
+fluid:true
+});
+
+function loadChannel(url){
+
+player.src({
+src:url,
+type:'application/x-mpegURL'
+});
+
+player.play().catch(()=>{});
+
+}
+
+const buttons=document.querySelectorAll('.channel-btn');
+
+buttons.forEach(btn=>{
+
+btn.addEventListener('click',()=>{
+
+buttons.forEach(b=>b.classList.remove('active'));
+
+btn.classList.add('active');
+
+loadChannel(btn.dataset.url);
+
+});
+
+});
+
+window.onload=()=>{
+
+loadChannel(
+document.querySelector('.channel-btn.active').dataset.url
+);
+
+};
+
+</script>
+
+</body>
+</html>
+
+
+
+<script>
+  atOptions = {
+    'key' : '4bbe56413db8aee17308f31e3efb8e19',
+    'format' : 'iframe',
+    'height' : 50,
+    'width' : 320,
+    'params' : {}
+  };
+</script>
+<script src="https://harryinspectionlucy.com/4bbe56413db8aee17308f31e3efb8e19/invoke.js"></script>
+
+
+<script>
+  atOptions = {
+    'key' : '4bbe56413db8aee17308f31e3efb8e19',
+    'format' : 'iframe',
+    'height' : 50,
+    'width' : 320,
+    'params' : {}
+  };
+</script>
+<script src="https://harryinspectionlucy.com/4bbe56413db8aee17308f31e3efb8e19/invoke.js"></script>
+
+
+<script>
+  atOptions = {
+    'key' : '4bbe56413db8aee17308f31e3efb8e19',
+    'format' : 'iframe',
+    'height' : 50,
+    'width' : 320,
+    'params' : {}
+  };
+</script>
+<script src="https://harryinspectionlucy.com/4bbe56413db8aee17308f31e3efb8e19/invoke.js"></script>
+
+
+<script>
+  atOptions = {
+    'key' : '4bbe56413db8aee17308f31e3efb8e19',
+    'format' : 'iframe',
+    'height' : 50,
+    'width' : 320,
+    'params' : {}
+  };
+</script>
+<script src="https://harryinspectionlucy.com/4bbe56413db8aee17308f31e3efb8e19/invoke.js"></script>
+
+
+
+
+
+<script src="https://harryinspectionlucy.com/c3/52/0b/c3520b447b17e4a5a0b22c020a1e5db2.js"></script>
+
+
+
+<script src="https://harryinspectionlucy.com/ab/35/28/ab35283ed0e145b03deab500b80f9abf.js"></script>
+
+
+
+
+
+
+

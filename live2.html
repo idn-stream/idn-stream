@@ -269,6 +269,31 @@ document.querySelector('.channel-btn.active').dataset.url
 
 </script>
 
+
+<script>
+const start = new Date("2026-06-25T01:40:00+07:00");
+const end = new Date("2026-06-25T22:00:00+07:00");
+const now = new Date();
+
+if (now < start) {
+  document.body.innerHTML = `
+    <div style="text-align:center;padding:50px;color:white;">
+      <h1>Stream Not Available</h1>
+      <p>Please check back later.</p>
+    </div>
+  `;
+} else if (now > end) {
+  document.body.innerHTML = `
+    <div style="text-align:center;padding:50px;color:white;">
+      <h1>Stream Ended</h1>
+      <p>This stream is no longer available.</p>
+    </div>
+  `;
+}
+</script>
+
+
+
 </body>
 </html>
 

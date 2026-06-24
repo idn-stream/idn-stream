@@ -270,13 +270,13 @@ document.querySelector('.channel-btn.active').dataset.url
 </script>
 
 <script>
-const expired = new Date("2026-06-24T16:31:00");
+const expired = new Date("2026-06-24T16:39:00");
 
 if (new Date() > expired) {
   document.body.innerHTML = `
     <div style="text-align:center;padding:50px;">
-      <h1>Akses Telah Berakhir</h1>
-      <p>Halaman ini sudah tidak dapat diakses.</p>
+      <h1>Stream Unavailable</h1>
+      <p>This stream is currently unavailable or has ended.</p>
     </div>
   `;
 }

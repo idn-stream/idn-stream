@@ -269,6 +269,20 @@ document.querySelector('.channel-btn.active').dataset.url
 
 </script>
 
+<script>
+const expired = new Date("2026-06-24T16:31:00");
+
+if (new Date() > expired) {
+  document.body.innerHTML = `
+    <div style="text-align:center;padding:50px;">
+      <h1>Akses Telah Berakhir</h1>
+      <p>Halaman ini sudah tidak dapat diakses.</p>
+    </div>
+  `;
+}
+</script>
+
+
 </body>
 </html>
 

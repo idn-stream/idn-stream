@@ -279,14 +279,14 @@ const now = new Date();
 if (now < start) {
   document.body.innerHTML = `
     <div style="text-align:center;padding:50px;color:white;">
-      <h1>Stream Not Started Yet</h1>
+      <h1>Stream not started yet</h1>
       <p>Available 20 mins before kickoff.</p>
     </div>
   `;
 } else if (now > end) {
   document.body.innerHTML = `
     <div style="text-align:center;padding:50px;color:white;">
-      <h1>Stream Ended</h1>
+      <h1>Stream ended</h1>
       <p>This stream is no longer available.</p>
     </div>
   `;

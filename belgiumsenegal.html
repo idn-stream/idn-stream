@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=550">
 
 <title></title>
 
@@ -141,6 +141,70 @@ font-size:12px;
 color:#aaa;
 }
 
+
+.chat-box{
+margin-top:15px;
+background:#111;
+border-radius:15px;
+padding:12px;
+}
+
+.chat-title{
+font-size:18px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.messages{
+height:260px;
+overflow-y:auto;
+background:#1a1a1a;
+border-radius:10px;
+padding:10px;
+margin-bottom:10px;
+}
+
+.msg{
+margin-bottom:8px;
+padding-bottom:8px;
+border-bottom:1px solid #333;
+}
+
+.msg-name{
+color:#ff2a2a;
+font-weight:bold;
+}
+
+.msg-time{
+color:#888;
+font-size:11px;
+margin-left:5px;
+}
+
+.chat-input{
+display:flex;
+gap:8px;
+}
+
+.chat-input input{
+flex:1;
+padding:10px;
+border:none;
+border-radius:8px;
+background:#2a2a2a;
+color:#fff;
+}
+
+.chat-input button{
+padding:10px 15px;
+border:none;
+border-radius:8px;
+background:#ff2a2a;
+color:#fff;
+font-weight:bold;
+cursor:pointer;
+}
+
 </style>
 </head>
 
@@ -153,22 +217,6 @@ color:#aaa;
 <div class="logo">
 <span class="logo-red">IDN</span>
 <span class="logo-white"> STREAM</span>
-</div>
-
-
-
-
-<div style="width:100%;display:flex;justify-content:center;margin:15px 0;">
-  <script>
-    atOptions = {
-      'key' : '2f41f7fecc41a1f47bf981b0bf0fbf91',
-      'format' : 'iframe',
-      'height' : 50,
-      'width' : 320,
-      'params' : {}
-    };
-  </script>
-  <script src="//harryinspectionlucy.com/2f41f7fecc41a1f47bf981b0bf0fbf91/invoke.js"></script>
 </div>
 
 
@@ -190,7 +238,7 @@ color:#aaa;
 
 
 <div class="live">
-🔴 Belgium x Senegal 
+🔴 Belgium x Senegal
 </div>
 
 </div>
@@ -250,11 +298,247 @@ onclick="window.open('https://whatsapp.com/channel/0029Vb6SDnI7dmeaUqDeoT1b','_b
 
 </div>
 
+<div class="chat-box">
+
+    <div class="chat-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>💬 Live Chat</span>
+
+        <span style="font-size:14px;color:#aaa;">
+            👁Viewer: <span id="viewerCount">0</span>
+        </span>
+    </div>
+
+    <div style="font-size:12px;color:#aaa;margin-bottom:10px;">
+        👤 <span id="userName">Guest</span>
+    </div>
+
+    <div id="messages" class="messages"></div>
+
+    <div class="chat-input">
+        <input
+            type="text"
+            id="messageInput"
+            placeholder="Type a message...">
+
+        <button id="sendBtn">
+            Send
+        </button>
+    </div>
+
+</div>
+
 <div class="footer">
 Powered by IDN STREAM
 </div>
 
 </div>
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+set,
+push,
+onValue,
+onDisconnect,
+remove
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+
+apiKey:"AIzaSyC74Y5s8whuuhV3hy9lfBdAow39sa31fTk",
+
+authDomain:"idn-stream.firebaseapp.com",
+
+databaseURL:"https://idn-stream-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:"idn-stream",
+
+storageBucket:"idn-stream.firebasestorage.app",
+
+messagingSenderId:"259123335993",
+
+appId:"1:259123335993:web:1eef9849deaf8d0fae4ee8"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getDatabase(app);
+
+const ROOM_ID = "belgium-senegal";
+
+window.firebaseDB=db;
+window.firebaseRef=ref;
+window.firebaseSet=set;
+window.firebasePush=push;
+window.firebaseOnValue=onValue;
+window.firebaseOnDisconnect=onDisconnect;
+
+// ===== REALTIME VIEWER =====
+
+const userId = crypto.randomUUID();
+
+const viewerRef = ref(db, "viewers/" + ROOM_ID + "/" + userId);
+
+// Tambahkan user ke daftar viewer
+set(viewerRef, {
+    online: true,
+    time: Date.now()
+});
+
+// Hapus otomatis saat user keluar
+onDisconnect(viewerRef).remove();
+
+// Update jumlah viewer
+onValue(ref(db, "viewers/" + ROOM_ID), (snapshot) => {
+    let total = 0;
+
+    if (snapshot.exists()) {
+        total = snapshot.size || Object.keys(snapshot.val()).length;
+    }
+
+    document.getElementById("viewerCount").textContent = total;
+
+});
+
+// ===== NAMA USER =====
+
+let username = localStorage.getItem("username");
+
+if (!username) {
+
+    username = "Guest" + Math.floor(Math.random() * 9999);
+
+    localStorage.setItem("username", username);
+
+}
+
+document.getElementById("userName").textContent = username;
+
+const EXPIRE_TIME = 6 * 60 * 60 * 1000;
+
+onValue(ref(db, "chat/" + ROOM_ID), (snapshot) => {
+    if (!snapshot.exists()) return;
+
+    const now = Date.now();
+
+    Object.entries(snapshot.val()).forEach(([key, msg]) => {
+        if (now - msg.time > EXPIRE_TIME) {
+            remove(ref(db, "chat/" + ROOM_ID + "/" + key));
+        }
+    });
+});
+
+// ===== LIVE CHAT =====
+
+const msgInput = document.getElementById("messageInput");
+const sendBtn = document.getElementById("sendBtn");
+const messagesDiv = document.getElementById("messages");
+
+let lastSend = 0;
+
+// Tampilkan pesan
+onValue(ref(db, "chat/" + ROOM_ID), (snapshot) => {
+
+    messagesDiv.innerHTML = "";
+
+    if (!snapshot.exists()) return;
+
+    const data = snapshot.val();
+
+    Object.values(data).forEach(msg => {
+
+        const div = document.createElement("div");
+
+        div.className = "msg";
+
+        const time = new Date(msg.time).toLocaleTimeString("id-ID", {
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+
+        div.innerHTML = `
+            <span class="msg-name">${msg.user}</span>
+            <span class="msg-time">${time}</span><br>
+            ${msg.text}
+        `;
+
+        messagesDiv.appendChild(div);
+
+    });
+
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+});
+
+// Kirim pesan
+sendBtn.onclick = () => {
+
+const text = msgInput.value.trim();
+
+if (text === "") return;
+
+if (Date.now() - lastSend < 5000) {
+    alert("Tunggu 5 detik sebelum mengirim lagi.");
+    return;
+}
+
+if (text.length > 200) {
+    alert("Maksimal 200 karakter.");
+    return;
+}
+
+const badWords = [
+"anjing",
+"bangsat",
+"kontol",
+"memek",
+"ngentot",
+"tolol"
+];
+
+let filtered = text;
+
+badWords.forEach(word => {
+    filtered = filtered.replaceAll(
+        new RegExp(word, "gi"),
+        "****"
+    );
+});
+
+    lastSend = Date.now();
+
+    push(ref(db, "chat/" + ROOM_ID), {    
+
+        user: username,
+
+        text: filtered,
+
+        time: Date.now()
+
+    });
+
+    msgInput.value = "";
+
+};
+
+msgInput.addEventListener("keypress", (e) => {
+
+    if (e.key === "Enter") {
+
+        sendBtn.click();
+
+    }
+
+});
+
+</script>
 
 <script src="https://vjs.zencdn.net/8.23.4/video.min.js"></script>
 
@@ -322,7 +606,7 @@ document.querySelector('.channel-btn.active').dataset.url
 
 <script>
 const start = new Date("2026-07-02T02:40:00+07:00");
-const end = new Date("2026-07-02T06:00:00+07:00");
+const end = new Date("2026-07-02T05:30:00+07:00");
 const now = new Date();
 
 if (now < start) {
@@ -342,21 +626,6 @@ if (now < start) {
 }
 </script>
 
-
-
-
-<div style="width:100%;display:flex;justify-content:center;margin:15px 0;">
-  <script>
-    atOptions = {
-      'key' : '2f41f7fecc41a1f47bf981b0bf0fbf91',
-      'format' : 'iframe',
-      'height' : 50,
-      'width' : 320,
-      'params' : {}
-    };
-  </script>
-  <script src="//harryinspectionlucy.com/2f41f7fecc41a1f47bf981b0bf0fbf91/invoke.js"></script>
-</div>
 
 
 

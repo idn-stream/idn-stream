@@ -266,6 +266,21 @@ muted:true,
 fluid:true
 });
 
+
+player.on('fullscreenchange', function () {
+    if (player.isFullscreen()) {
+        if (screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock('landscape').catch(() => {});
+        }
+    } else {
+        if (screen.orientation && screen.orientation.unlock) {
+            screen.orientation.unlock();
+        }
+    }
+});
+
+
+
 function loadChannel(url){
 
 player.src({

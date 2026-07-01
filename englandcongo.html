@@ -371,6 +371,8 @@ const app = initializeApp(firebaseConfig);
 
 const db = getDatabase(app);
 
+const ROOM_ID = "england-congo";
+
 window.firebaseDB=db;
 window.firebaseRef=ref;
 window.firebaseSet=set;
@@ -382,7 +384,7 @@ window.firebaseOnDisconnect=onDisconnect;
 
 const userId = crypto.randomUUID();
 
-const viewerRef = ref(db, "viewers/" + userId);
+const viewerRef = ref(db, "viewers/" + ROOM_ID + "/" + userId);
 
 // Tambahkan user ke daftar viewer
 set(viewerRef, {
@@ -394,8 +396,7 @@ set(viewerRef, {
 onDisconnect(viewerRef).remove();
 
 // Update jumlah viewer
-onValue(ref(db, "viewers"), (snapshot) => {
-
+onValue(ref(db, "viewers/" + ROOM_ID), (snapshot) => {
     let total = 0;
 
     if (snapshot.exists()) {
@@ -422,14 +423,14 @@ document.getElementById("userName").textContent = username;
 
 const EXPIRE_TIME = 6 * 60 * 60 * 1000;
 
-onValue(ref(db, "chat"), (snapshot) => {
+onValue(ref(db, "chat/" + ROOM_ID), (snapshot) => {
     if (!snapshot.exists()) return;
 
     const now = Date.now();
 
     Object.entries(snapshot.val()).forEach(([key, msg]) => {
         if (now - msg.time > EXPIRE_TIME) {
-            remove(ref(db, "chat/" + key));
+            remove(ref(db, "chat/" + ROOM_ID + "/" + key));
         }
     });
 });
@@ -443,7 +444,7 @@ const messagesDiv = document.getElementById("messages");
 let lastSend = 0;
 
 // Tampilkan pesan
-onValue(ref(db, "chat"), (snapshot) => {
+onValue(ref(db, "chat/" + ROOM_ID), (snapshot) => {
 
     messagesDiv.innerHTML = "";
 
@@ -513,7 +514,7 @@ badWords.forEach(word => {
 
     lastSend = Date.now();
 
-    push(ref(db, "chat"), {
+    push(ref(db, "chat/" + ROOM_ID), {    
 
         user: username,
 

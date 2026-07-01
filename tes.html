@@ -359,7 +359,8 @@ ref,
 set,
 push,
 onValue,
-onDisconnect
+onDisconnect,
+remove
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
@@ -434,6 +435,20 @@ if (!username) {
 
 document.getElementById("userName").textContent = username;
 
+const EXPIRE_TIME = 6 * 60 * 60 * 1000;
+
+onValue(ref(db, "chat"), (snapshot) => {
+    if (!snapshot.exists()) return;
+
+    const now = Date.now();
+
+    Object.entries(snapshot.val()).forEach(([key, msg]) => {
+        if (now - msg.time > EXPIRE_TIME) {
+            remove(ref(db, "chat/" + key));
+        }
+    });
+});
+
 // ===== LIVE CHAT =====
 
 const msgInput = document.getElementById("messageInput");
@@ -479,14 +494,37 @@ onValue(ref(db, "chat"), (snapshot) => {
 // Kirim pesan
 sendBtn.onclick = () => {
 
-    const text = msgInput.value.trim();
+const text = msgInput.value.trim();
 
-    if (text === "") return;
+if (text === "") return;
 
-    if (Date.now() - lastSend < 3000) {
-        alert("Tunggu 3 detik sebelum mengirim lagi.");
-        return;
-    }
+if (Date.now() - lastSend < 5000) {
+    alert("Tunggu 5 detik sebelum mengirim lagi.");
+    return;
+}
+
+if (text.length > 200) {
+    alert("Maksimal 200 karakter.");
+    return;
+}
+
+const badWords = [
+"anjing",
+"bangsat",
+"kontol",
+"memek",
+"ngentot",
+"tolol"
+];
+
+let filtered = text;
+
+badWords.forEach(word => {
+    filtered = filtered.replaceAll(
+        new RegExp(word, "gi"),
+        "****"
+    );
+});
 
     lastSend = Date.now();
 
@@ -494,7 +532,7 @@ sendBtn.onclick = () => {
 
         user: username,
 
-        text: text,
+        text: filtered,
 
         time: Date.now()
 
@@ -581,7 +619,7 @@ document.querySelector('.channel-btn.active').dataset.url
 
 
 <script>
-const start = new Date("2026-06-01T22:40:00+07:00");
+const start = new Date("2026-06-02T22:40:00+07:00");
 const end = new Date("2026-07-02T02:00:00+07:00");
 const now = new Date();
 
